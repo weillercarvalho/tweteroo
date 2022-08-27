@@ -11,9 +11,14 @@ const tweets = [];
 
 server.post(`/sign-up`,(req,res) => {
     const singup = req.body;
-    console.log(singup)
-    users.push(singup);
-    res.send(`OK!`);
+    const {username,avatar} = req.body;
+    if (!username || !avatar) {
+        return res.status(400).send({error:`Todos os campos são obrigatórios!`})
+    }
+    else {
+        users.push(singup);
+        return res.send(`OK!`);
+    }
 })
 
 server.get(`/tweets`,(req,res) => {
@@ -25,17 +30,23 @@ server.get(`/tweets`,(req,res) => {
             }
         }
     });
-    
-    res.send(iterTweets);
+    const reverseIter = iterTweets.reverse();
+    res.send(reverseIter);
 })
 
 server.post(`/tweets`,(req,res) => {
-    const tweet = req.body;
-    tweets.push(tweet);
-    res.send(`OK!`);
- 
+    console.log(req.body)
+    const username =  req.headers.user;
+    const {tweet} = req.body;
+    if (!username || !tweet) {
+        return res.status(400).send({error:`Todos os campos são obrigatórios!`})
+    }
+        tweets.push({username: username,tweet})
+        console.log(tweets)
+        return res.status(201).send(tweets);
 })
 
 server.listen(5000,(req,res) => {
-    console.log(`Listening on port 5000`)
+    // console.log(`Listening on port 5000`)
 })
+
